@@ -24,18 +24,26 @@ struct derived : public base {
     }
 };
 
+void hello(base &b) {
+    b.hello();
+}
+
+void hello(base const &b) {
+    b.hello();
+}
+
 int main() {
     base b;
-    b.hello();
+    ::hello(b);
 
     derived d;
-    d.hello();
+    ::hello(d);
 
     const base cb;
-    cb.hello();
+    ::hello(cb);
 
     const derived cd;
-    cd.hello();
+    ::hello(cd);
 
     return 0;
 }
