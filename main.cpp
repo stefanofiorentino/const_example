@@ -56,10 +56,21 @@ int main() {
     ::hello(cd);
 
     std::string s = cd.get_name();
+    static_assert(!std::is_const<decltype(s)>::value, "is const instead"); // static_assert is c++11
+    static_assert(!std::is_reference<decltype(s)>::value, "is reference instead");
+
     std::string const s1 = cd.get_name();
-    // std::string &s2 = cd.get_name(); // compile error
+    static_assert(std::is_const<decltype(s1)>::value, "isn't const instead");
+    static_assert(!std::is_reference<decltype(s1)>::value, "is reference instead");
+
+    // std::string &s2 = cd.get_name(); // compile error: trying to assign const-ref to ref
+    static_assert(std::is_const<typename std::remove_reference<decltype(cd.get_name())>::type>::value, "isn't const instead");
+    static_assert(std::is_reference<decltype(cd.get_name())>::value, "isn't reference instead");
+
     std::string const &s3 = cd.get_name();
-    // cd.get_name().append("."); // compile error
+    static_assert(std::is_const<typename std::remove_reference<decltype(s3)>::type>::value, "isn't const instead");
+    static_assert(std::is_reference<decltype(s3)>::value, "isn't reference instead");
+    // cd.get_name().append("."); // compile error: trying to mod a const ref
 
     return 0;
 }
